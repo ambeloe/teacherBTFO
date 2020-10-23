@@ -301,6 +301,7 @@ def go_to_school(h_u, h_p, meeting):
         if (tHour == hour) and (tMin == minute) or ongoing:
             print("starting " + meeting["name"])
             meet(h_u, h_p, meeting["code"], int((tte - now).seconds / 60), meeting["name"])
+            clear_console()
             print(meeting["name"] + " ended")
             break
         time.sleep(5)
