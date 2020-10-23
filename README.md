@@ -3,7 +3,11 @@ hcpss google meet automation
 
 uses folder %appdata%/teacherBTFO/ on windows
 
-schedule format(json):
+# suggested usage:
+	* schedule task to run script at midnight every day
+	* alternatively, run the loop script
+
+# schedule format(json):
 	* hcpss_username: string containing the hcpss username you want to use
 	* hcpss_password: string containing the hcpss password you want to use
 	* one key for each day of the week(monday is 0) containing an array of class dictionaries
