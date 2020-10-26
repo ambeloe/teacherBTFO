@@ -1,27 +1,29 @@
 {
+"hcpss_username": "sampleusername32352"
+"hcpss_password": "hunter2"
 "0": [
-	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "cool class"},
-	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "some math"},
-	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "foreign language"},
-	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "chair assembly class"}],
+	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "Croatian"},
+	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "Math"},
+	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "English"},
+	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "Shop"}],
 "1": [
-	{"code": "meeting-code-2", "starttime": "8:25", "maxduration": 29, "record": false, "name": "some math"},
-	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "cool class"},
-	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "some math"},
-	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "foreign language"},
-	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "chair assembly class"}],
+	{"code": "meeting-code-2", "starttime": "8:25", "maxduration": 29, "record": false, "name": "Math"},
+	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "Croatian"},
+	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "Math"},
+	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "English"},
+	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "Shop"}],
 "2": [],
 "3": [
-	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "cool class"},
-	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "some math"},
-	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "foreign language"},
-	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "chair assembly class"}],
+	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "Croatian"},
+	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "Math"},
+	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "English"},
+	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "Shop"}],
 "4": [
-	{"code": "meeting-code-2", "starttime": "8:25", "maxduration": 29, "record": false, "name": "some math"},
-	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "cool class"},
-	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "some math"},
-	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "foreign language"},
-	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "chair assembly class"}],
+	{"code": "meeting-code-2", "starttime": "8:25", "maxduration": 29, "record": false, "name": "Math"},
+	{"code": "meeting-code-1", "starttime": "9:00", "maxduration": 58, "record": false, "name": "Croatian"},
+	{"code": "meeting-code-2", "starttime": "10:00", "maxduration": 58, "record": false, "name": "Math"},
+	{"code": "meeting-code-3", "starttime": "13:10", "maxduration": 58, "record": true, "name": "English"},
+	{"code": "meeting-code-4", "starttime": "14:10", "maxduration": 58, "record": false, "name": "Shop"}],
 "5": [],
 "6": []
 }
