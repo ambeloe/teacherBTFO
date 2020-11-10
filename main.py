@@ -129,6 +129,46 @@ else:
     # placeholder for linux and other commands
     pass
 
+test = False
+
+
+def login(h_u, h_p, d):
+    if test:
+        return
+    d.get(
+        "https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmeet.google.com%2F&sacu=1&hl=en_US&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
+    e = d.find_element_by_id("identifierId")
+    e.clear()
+    e.send_keys(hcpss_username + "@inst.hcpss.org")
+    e.send_keys(Keys.ENTER)
+
+    while True:
+        try:
+            e = d.find_element_by_id("username")
+            break
+        except:
+            time.sleep(0.02)
+    e.send_keys(h_u)
+    e = d.find_element_by_id("password")
+    e.send_keys(h_p)
+    e.send_keys(Keys.ENTER)
+
+def join(code, d):
+    while True:
+        try:
+            d.find_element_by_xpath("//*[text()='Use a meeting code']").click()
+            time.sleep(0.25)
+            break
+        except:
+            time.sleep(0.05)
+    while True:
+        try:
+            d.find_element_by_xpath("//input[@type='text']").send_keys(code)
+            time.sleep(0.1)
+            break
+        except:
+            time.sleep(0.1)
+    d.find_element_by_xpath("//span[text()='Continue']").click()
 
 def meet(username, password, meeting_id, max_len, name):
     boptions = webdriver.ChromeOptions()
@@ -136,6 +176,8 @@ def meet(username, password, meeting_id, max_len, name):
     # boptions.headless = True
     boptions.add_argument('--disable-gpu')
     boptions.add_argument("--incognito")
+    boptions.add_argument("--app=http://www.gstatic.com/")
+    boptions.add_argument("--new-window")
     boptions.add_experimental_option("prefs", {
         "profile.default_content_setting_values.media_stream_mic": 2,
         "profile.default_content_setting_values.media_stream_camera": 2,
@@ -145,39 +187,36 @@ def meet(username, password, meeting_id, max_len, name):
 
     driver = webdriver.Chrome(executable_path=path + "/teacherBTFO/chromedriver_win32/chromedriver.exe",
                               options=boptions)
-    driver.get(
-        "https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmeet.google.com%2F&sacu=1&hl=en_US&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
-    e = driver.find_element_by_id("identifierId")
-    e.clear()
-    e.send_keys(hcpss_username + "@inst.hcpss.org")
-    e.send_keys(Keys.ENTER)
+    driver.maximize_window()
 
-    while True:
-        try:
-            driver.find_element_by_id("username")
-            break
-        except:
-            time.sleep(0.05)
-    driver.find_element_by_id("username").send_keys(username)
-    e = driver.find_element_by_id("password")
-    e.send_keys(password)
-    e.send_keys(Keys.ENTER)
-    while True:
-        try:
-            driver.find_element_by_xpath("//*[text()='Use a meeting code']").click()
-            time.sleep(0.25)
-            break
-        except:
-            time.sleep(0.05)
-    while True:
-        try:
-            driver.find_element_by_xpath("//input[@type='text']").send_keys(meeting_id)
-            time.sleep(0.1)
-            break
-        except:
-            time.sleep(0.1)
-    driver.find_element_by_xpath("//span[text()='Continue']").click()
-    # missing code to actually join and to auto disconnect
+    login(hcpss_username, hcpss_password, driver)
+
+    if test:
+        # driver.get("https://meet.google.com")
+        # while True:
+        #     try:
+        #         driver.find_element_by_xpath("//div[not(@data-expanded)]/input").send_keys(meeting_id)
+        #     except:
+        #         time.sleep(0.1)
+        # webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
+        driver.get(meeting_id)
+    else:
+        while True:
+            try:
+                driver.find_element_by_xpath("//*[text()='Use a meeting code']").click()
+                time.sleep(0.25)
+                break
+            except:
+                time.sleep(0.05)
+        while True:
+            try:
+                driver.find_element_by_xpath("//input[@type='text']").send_keys(meeting_id)
+                time.sleep(0.1)
+                break
+            except:
+                time.sleep(0.1)
+        driver.find_element_by_xpath("//span[text()='Continue']").click()
+
     # add screenshot code for testing
     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     while True:
@@ -230,31 +269,44 @@ def meet(username, password, meeting_id, max_len, name):
 
     join_time = cmin()
 
-    send_msg("present")
+    # send_msg("present")
     participants = 0
     # wait until people have left
     while True:
         # print("inside main loop")
-        time.sleep(2)
+        time.sleep(1)
+        # monstrosity lmao
+        t = 0
+        e = None
+        # try to find for up to 200ms
+        while e is None and t < 41:
+            try:
+                e = driver.find_element_by_xpath(
+                    "//div[span/span/div/div/span]/span/span/div/div/span[contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")]")
+            except:
+                pass
+            try:
+                driver.find_element_by_xpath(
+                    "//div[span/div/span]/span/div/span[contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")]")
+            except:
+                pass
+            t += 1
+            time.sleep(0.05)
         try:
-            # monstrosity lmao
-            e = driver.find_element_by_xpath(
-                "//div[span/span/div/div/span]/span/span/div/div/span[contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")]")
-            participants = int(e.text)
-        except ValueError:
+            participants = int(e.text.replace("(", "").replace(")", ""))
+        except:
             print("couldn't find participant number")
 
         clear_console(host_int)
         elapsed = cmin() - join_time
         print("Class: " + name)
-        print("Participants: " + e.text)
+        print("Participants: " + str(participants))
         print("Elapsed time: " + str(elapsed))
-
         if (participants < 10 and elapsed > 5) or elapsed > max_len:
             break
 
     # clean up
-    send_msg("bye")
+    # send_msg("bye")
     driver.close()
     # try:
     #     os.remove(path + "/teacherBTFO/peoplecount.png")
@@ -271,13 +323,14 @@ schedule = json.load(open(path + "/teacherBTFO/schedule.json"))
 hcpss_username = schedule["hcpss_username"]
 hcpss_password = schedule["hcpss_password"]
 
+
 # try:
 #     schedule = json.load(open(path + "/teacherBTFO/schedule.json"))
 # except FileNotFoundError:
-    # with open(path + "/teacherBTFO/config.json", "w") as f:
-    #     f.write(json.dumps({"username": "", "schedule": []}, indent=4))
-    # schedule = json.load(open(path + "/teacherBTFO/schedule.json"))
-    # pass
+# with open(path + "/teacherBTFO/config.json", "w") as f:
+#     f.write(json.dumps({"username": "", "schedule": []}, indent=4))
+# schedule = json.load(open(path + "/teacherBTFO/schedule.json"))
+# pass
 
 
 # print(schedule)
@@ -301,21 +354,25 @@ def go_to_school(h_u, h_p, meeting):
         if (tHour == hour) and (tMin == minute) or ongoing:
             print("starting " + meeting["name"])
             meet(h_u, h_p, meeting["code"], int((tte - now).seconds / 60), meeting["name"])
-            clear_console()
+            clear_console(host_int)
             print(meeting["name"] + " ended")
             break
         time.sleep(5)
 
 
 if __name__ == "__main__":
-    weekday = datetime.datetime.today().weekday()
-    docket = schedule[str(weekday)]
-    threads = []
-    # start a thread per class
-    for meeting in docket:
-        threads.append(threading.Thread(target=go_to_school, args=[hcpss_username, hcpss_password, meeting]))
-        threads[-1].start()
-    # wait for all threads to stop
-    for thread in threads:
-        thread.join()
-    print("done")
+    test = False
+    if test:
+        meet(hcpss_username, hcpss_password, "test", 10, "test")
+    else:
+        weekday = datetime.datetime.today().weekday()
+        docket = schedule[str(weekday)]
+        threads = []
+        # start a thread per class
+        for meeting in docket:
+            threads.append(threading.Thread(target=go_to_school, args=[hcpss_username, hcpss_password, meeting]))
+            threads[-1].start()
+        # wait for all threads to stop
+        for thread in threads:
+            thread.join()
+        print("done")
