@@ -2,11 +2,13 @@ import os
 import json
 import time
 import datetime
+import keyboard
 import platform
 import threading
 import subprocess
 import urllib.request
 # from tkinter import *
+import winsound
 from zipfile import ZipFile
 
 host = platform.system()
@@ -132,14 +134,26 @@ else:
 test = False
 
 
+def ctime():
+    return int(time.time() / 60)
+
+
 def login(h_u, h_p, d):
     if test:
         return
     d.get(
         "https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmeet.google.com%2F&sacu=1&hl=en_US&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
-    e = d.find_element_by_id("identifierId")
+    # time.sleep(1)
+    for i in range(0, 20):
+        try:
+            e = d.find_element_by_id("identifierId")
+            break
+        except:
+            time.sleep(0.1)
     e.clear()
     e.send_keys(hcpss_username + "@inst.hcpss.org")
+
+    e = d.find_element_by_xpath("//button[span[text()=\"Next\"]]")
     e.send_keys(Keys.ENTER)
 
     while True:
@@ -152,6 +166,14 @@ def login(h_u, h_p, d):
     e = d.find_element_by_id("password")
     e.send_keys(h_p)
     e.send_keys(Keys.ENTER)
+
+def mic_dialog_fuckoff(driver):
+    try:
+        e = driver.find_element_by_xpath("//div[div/div[text()=\"Allow Meet to use your camera and microphone\"]]/div/div[span/span[text()=\"Dismiss\"]]")
+        time.sleep(0.2)
+        e.send_keys(Keys.ESCAPE)
+    except:
+        pass
 
 def join(code, d):
     while True:
@@ -170,7 +192,22 @@ def join(code, d):
             time.sleep(0.1)
     d.find_element_by_xpath("//span[text()='Continue']").click()
 
-def meet(username, password, meeting_id, max_len, name):
+
+def join_timeout(code, driver, timeout):
+    start_time = ctime()
+    while ctime() < start_time + timeout:
+        join(code, driver)
+        time.sleep(1)
+        try:
+            e = driver.find_element_by_xpath(
+                "//div[div/div[text()=\"You\'re not allowed to start a meeting\"] and @style=\"visibility: visible;\"]")
+            winsound.Beep(300, 400)
+        except:
+            break
+        time.sleep(29.5)
+
+
+def meet(username, password, meeting_id, max_len, name, rec):
     boptions = webdriver.ChromeOptions()
     boptions.binary_location = path + "/teacherBTFO/chrome-win/chrome.exe"
     # boptions.headless = True
@@ -201,24 +238,10 @@ def meet(username, password, meeting_id, max_len, name):
         # webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
         driver.get(meeting_id)
     else:
-        while True:
-            try:
-                driver.find_element_by_xpath("//*[text()='Use a meeting code']").click()
-                time.sleep(0.25)
-                break
-            except:
-                time.sleep(0.05)
-        while True:
-            try:
-                driver.find_element_by_xpath("//input[@type='text']").send_keys(meeting_id)
-                time.sleep(0.1)
-                break
-            except:
-                time.sleep(0.1)
-        driver.find_element_by_xpath("//span[text()='Continue']").click()
+        join_timeout(meeting_id, driver, 5)
 
     # add screenshot code for testing
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    # webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     while True:
         try:
             e = driver.find_element_by_xpath("//div[div/div[text()=\"Allow Meet to use your camera and microphone\"]]")
@@ -232,12 +255,9 @@ def meet(username, password, meeting_id, max_len, name):
     time.sleep(0.2)
     e.send_keys(Keys.ESCAPE)
 
-    time.sleep(0.5)
+    time.sleep(1)
     e = driver.find_element_by_xpath("//div[span/span[text()=\"Join now\"]]")
     e.click()
-
-    def cmin():
-        return int(time.time() / 60)
 
     def click(x, y):
         el = driver.find_element_by_xpath("//html")
@@ -267,9 +287,29 @@ def meet(username, password, meeting_id, max_len, name):
             except:
                 time.sleep(0.1)
 
-    join_time = cmin()
+    def toggle_captions(drv):
+        try:
+            el = drv.find_element_by_xpath("//div[span/span/div/div[contains(text(),\"captions\")]]").click()
+        except:
+            print("caption toggling failed")
+
+    def set_captions(drv, state):
+        try:
+            if state:
+                el = drv.find_element_by_xpath("//div[span/span/div/div[text()=\"Turn on captions\"]]").click()
+            else:
+                el = drv.find_element_by_xpath("//div[span/span/div/div[text()=\"Turn off captions\"]]").click()
+        except:
+            print("failed to set caption state")
+
+    join_time = ctime()
+    if rec:
+        keyboard.send("F9")
+    time.sleep(1)
 
     # send_msg("present")
+    set_captions(driver, True)
+
     participants = 0
     # wait until people have left
     while True:
@@ -284,29 +324,46 @@ def meet(username, password, meeting_id, max_len, name):
                 e = driver.find_element_by_xpath(
                     "//div[span/span/div/div/span]/span/span/div/div/span[contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")]")
             except:
-                pass
-            try:
-                driver.find_element_by_xpath(
-                    "//div[span/div/span]/span/div/span[contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")]")
-            except:
-                pass
+                try:
+                    # might comment it out as it is useful to be able to prevent it from leaving
+
+                    # doesnt work for whatever unholy reason
+                    e = driver.find_element_by_xpath("//div[span/div/span]/span/div/span[(contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")) and contains(text(), \"(\")]")
+                except:
+                    pass
             t += 1
             time.sleep(0.05)
+
         try:
+            # print(e.text)
             participants = int(e.text.replace("(", "").replace(")", ""))
         except:
             print("couldn't find participant number")
 
         clear_console(host_int)
-        elapsed = cmin() - join_time
+        elapsed = ctime() - join_time
         print("Class: " + name)
         print("Participants: " + str(participants))
         print("Elapsed time: " + str(elapsed))
-        if (participants < 10 and elapsed > 5) or elapsed > max_len:
+
+        # get rid of the USE MIC popup that happens whenever usb devices are plugged or a new window is opened
+        mic_dialog_fuckoff(driver)
+
+        # detect if in breakout room
+        try:
+            e = driver.find_element_by_xpath("//i[text()=\"gmail_rooms\"]")
+            breakout = True
+        except:
+            breakout = False
+
+        # exit logic
+        if (participants < 10 and elapsed > 5 and not breakout) or elapsed > max_len:
             break
 
     # clean up
     # send_msg("bye")
+    if rec:
+        keyboard.send("F10")
     driver.close()
     # try:
     #     os.remove(path + "/teacherBTFO/peoplecount.png")
@@ -353,7 +410,7 @@ def go_to_school(h_u, h_p, meeting):
         # print(minute)
         if (tHour == hour) and (tMin == minute) or ongoing:
             print("starting " + meeting["name"])
-            meet(h_u, h_p, meeting["code"], int((tte - now).seconds / 60), meeting["name"])
+            meet(h_u, h_p, meeting["code"], int((tte - now).seconds / 60), meeting["name"], meeting["record"])
             clear_console(host_int)
             print(meeting["name"] + " ended")
             break
