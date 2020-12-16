@@ -15,5 +15,5 @@ uses folder %appdata%/teacherBTFO/ on windows
 			* code: string containing the google meet code
 			* starttime: string containing the time the class starts (24 hour format)
 			* maxduration: int containing the max length of the class (minutes)
-			* record: boolean of whether or not to record the class (currently does nothing)
+			* record: boolean of whether or not to record the class (now works) (presses f9 at start and f10 at end)
 			* name: string containing the display name of the class
