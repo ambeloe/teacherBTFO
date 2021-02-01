@@ -152,7 +152,7 @@ def login(h_u, h_p, d):
             time.sleep(0.1)
     e.clear()
     e.send_keys(hcpss_username + "@inst.hcpss.org")
-
+    time.sleep(0.2)
     e = d.find_element_by_xpath("//button[span[text()=\"Next\"]]")
     e.send_keys(Keys.ENTER)
 
@@ -176,21 +176,29 @@ def mic_dialog_fuckoff(driver):
         pass
 
 def join(code, d):
+    # wait till page is loaded
     while True:
         try:
-            d.find_element_by_xpath("//*[text()='Use a meeting code']").click()
+            # old ui
+            # d.find_element_by_xpath("//*[text()='Use a meeting code']").click()
+            d.find_element_by_xpath("//div[contains(text(),'Secure video')]").click()
             time.sleep(0.25)
             break
         except:
             time.sleep(0.05)
+    # brute force code typing
     while True:
         try:
-            d.find_element_by_xpath("//input[@type='text']").send_keys(code)
+            es = d.find_elements_by_xpath("//input[@type='text']")
+            for e in es:
+                e.send_keys(code)
             time.sleep(0.1)
             break
         except:
             time.sleep(0.1)
-    d.find_element_by_xpath("//span[text()='Continue']").click()
+    # old ui
+    # d.find_element_by_xpath("//span[text()='Continue']").click()
+    d.find_element_by_xpath("//div/div/button[span[text()='Join']]").click()
 
 
 def join_timeout(code, driver, timeout):
@@ -323,12 +331,14 @@ def meet(username, password, meeting_id, max_len, name, rec):
             try:
                 e = driver.find_element_by_xpath(
                     "//div[span/span/div/div/span]/span/span/div/div/span[contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")]")
+                break
             except:
                 try:
                     # might comment it out as it is useful to be able to prevent it from leaving
 
                     # doesnt work for whatever unholy reason
                     e = driver.find_element_by_xpath("//div[span/div/span]/span/div/span[(contains(text(), \"0\") or contains(text(), \"1\") or contains(text(), \"2\") or contains(text(), \"3\") or contains(text(), \"4\") or contains(text(), \"5\") or contains(text(), \"6\") or contains(text(), \"7\") or contains(text(), \"8\") or contains(text(), \"9\")) and contains(text(), \"(\")]")
+                    break
                 except:
                     pass
             t += 1
@@ -348,6 +358,17 @@ def meet(username, password, meeting_id, max_len, name, rec):
 
         # get rid of the USE MIC popup that happens whenever usb devices are plugged or a new window is opened
         mic_dialog_fuckoff(driver)
+
+        # the best code that will ever exist that just clicks everything like a button in a lazy attemptt to join breakout rooms
+        try:
+            es = driver.find_elements_by_xpath("//*[contains(text(), \"oin\")]")
+            ac = webdriver.ActionChains(driver)
+            for i in es:
+                ac.move_to_element(i).click().perform()
+        except:
+            # dont want it to crash
+            pass
+
 
         # detect if in breakout room
         try:
