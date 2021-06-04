@@ -1,4 +1,4 @@
-# teacherBTFO
+# teacherBTFO (abandoned)
 hcpss google meet automation
 
 uses folder %appdata%/teacherBTFO/ on windows
